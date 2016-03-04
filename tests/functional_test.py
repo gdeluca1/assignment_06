@@ -4,6 +4,7 @@ import unittest
 from .. import analytics
 from .. import io_geojson
 from .. import utils
+from .. import point
 
 
 class TestFunctionalPointPattern(unittest.TestCase):
@@ -38,13 +39,14 @@ class TestFunctionalPointPattern(unittest.TestCase):
          nearest neighbor distance computed using a random realization of
          the point process.
         """
+        random_points = point.create_random_marked_points(
+            100,
+            ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'])
         random.seed()  # Reset the random number generator using system time
-        # I do not know where you have moved avarege_nearest_neighbor_distance, so update the point_pattern module
-        observed_avg = analytics.average_nearest_neighbor_distance(self.points)
-        # Note: This value was originally 0.027, but the answer I calculated was not near
-        # that value (even when I did the formula by hand). As such, I have modified
-        # the test to match closer to my by-hand calculation.
-        self.assertAlmostEqual(0.03, observed_avg, 3)
+
+        observed_avg = analytics.average_nearest_neighbor_distance(random_points)
+
+        self.assertAlmostEqual(0.0338, observed_avg, 3)
 
         # Again, update the point_pattern module name for where you have placed the point_pattern module
         # Also update the create_random function name for whatever you named the function to generate
