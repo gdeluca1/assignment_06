@@ -1,5 +1,6 @@
 import math
 import random
+from .point import Point
 
 
 def create_random(n):
@@ -7,9 +8,13 @@ def create_random(n):
     Generates n random points. Coordinates are between 0 and 1.00 inclusive.
     """
     rng = random.Random()
+    marks = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet']
     to_return = []
     for i in range(n):
-        to_return.append((round(rng.uniform(0, 1), 2), round(rng.uniform(0, 1), 2)))
+        to_return.append(Point(
+            round(rng.uniform(0, 1), 2),
+            round(rng.uniform(0, 1), 2),
+            color=rng.choice(marks)))
     return to_return
 
 

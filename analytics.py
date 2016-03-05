@@ -1,5 +1,4 @@
 from . import utils
-from .point import Point
 
 
 def find_largest_city(gj):
@@ -32,53 +31,6 @@ def find_largest_city(gj):
     return city, max_population
 
 
-def legacy_average_nearest_neighbor_distance(points):
-    """
-    Given a set of points, compute the average nearest neighbor.
-
-    Parameters
-    ----------
-    points : list
-             A list of points in the form (x,y)
-
-    Returns
-    -------
-    mean_d : float
-             Average nearest neighbor distance
-
-    References
-    ----------
-    Clark and Evan (1954 Distance to Nearest Neighbor as a
-     Measure of Spatial Relationships in Populations. Ecology. 35(4)
-     p. 445-453.
-    """
-    mean_d = 0
-    temp_nearest_neighbor = None
-    # Average the nearest neighbor distance of all points.
-    for point in points:
-        # Find the nearest neighbor to this point.
-        for otherPoint in points:
-            # You are not your own neighbor.
-            if utils.check_coincident(point, otherPoint):
-                continue
-            # To avoid multiple calculations, we'll cache the result.
-            current_distance = utils.euclidean_distance(point, otherPoint)
-            # nearest neighbor will be None if this is the first neighbor we have iterated over.
-            if temp_nearest_neighbor is None:
-                temp_nearest_neighbor = current_distance
-            elif temp_nearest_neighbor > current_distance:
-                temp_nearest_neighbor = current_distance
-        # At this point, we've found point's nearest neighbor distance.
-        # Add in that distance.
-        mean_d += temp_nearest_neighbor
-        temp_nearest_neighbor = None
-
-    # Divide by number of points.
-    mean_d /= len(points)
-
-    return mean_d
-
-
 def average_nearest_neighbor_distance(points_list, mark = None):
     """
     Given a set of points, compute the average nearest neighbor.
@@ -106,16 +58,16 @@ def average_nearest_neighbor_distance(points_list, mark = None):
         # User passed in no mark, we will use the entire points_list.
         points = points_list
     else:
-        points = list(filter(lambda current_point: current_point.mark['color'] == mark))
+        points = list(filter(lambda current_point: current_point.mark['color'] == mark, points_list))
 
     mean_d = 0
     temp_nearest_neighbor = None
     # Average the nearest neighbor distance of all points.
-    for point in points:
+    for i, point in enumerate(points):
         # Find the nearest neighbor to this point.
-        for otherPoint in points:
+        for j, otherPoint in enumerate(points):
             # You are not your own neighbor.
-            if point.is_coincident(otherPoint):
+            if i == j:
                 continue
             # To avoid multiple calculations, we'll cache the result.
             current_distance = utils.euclidean_distance((point.x, point.y), (otherPoint.x, otherPoint.y))
@@ -135,13 +87,14 @@ def average_nearest_neighbor_distance(points_list, mark = None):
     return mean_d
 
 
-def permutations(p = 99):
+def permutations(p=99, mark=None):
     n = 100
     to_return = []
     for i in range(p):
         to_return.append(
-            legacy_average_nearest_neighbor_distance(
-                utils.create_random(n)
+            average_nearest_neighbor_distance(
+                utils.create_random(n),
+                mark
             )
         )
     return to_return
