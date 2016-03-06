@@ -15,3 +15,4 @@ class Point(object):
         result = utils.shift_point((self.x, self.y), delta_x, delta_y)
         self.x = utils.getx(result)
         self.y = utils.gety(result)
+
